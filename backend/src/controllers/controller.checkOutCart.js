@@ -132,13 +132,30 @@ export const updateOrderStatus = async (req,res)=>{
 export const getAllOrderByAdmin = async(req,res)=>{
     try {
 
-        const response = await ModelCheckOutCart.find().populate("user","name email").sort({createdAt : -1})
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const skip = (page - 1)* limit
+        console.log("skip",skip)
+
+        const response = await ModelCheckOutCart.find()
+        .populate("user","name email")
+        .sort({createdAt : -1})
+        .skip(skip)
+        .limit(limit)
+
 
         console.log(response)
+
+        const total =  await ModelCheckOutCart.countDocuments()
+
 
         return res.status(201).json({
             message:"Lấy orders admin done",
             // total: response.length,
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
             data: response
         })
     } catch (error) {

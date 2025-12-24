@@ -6,7 +6,7 @@ import {createOder , getOderDetails , updateOrderStatus, getAllOrder,getAllOrder
 
 const router = express.Router()
 
-router.get('/admin/orders',checkAuth,checkPermission("admin"),getAllOrderByAdmin)
+router.get(`/admin/orders`,checkAuth,checkPermission("admin"),getAllOrderByAdmin)
 
 router.get('/orders/list/client',checkAuth,getAllOrder)
 

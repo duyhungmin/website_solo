@@ -10,5 +10,5 @@ export const checkOutCartApi = {
 
     getAllOrders : () => ClientAxios.get('/check-out/orders/list/client'),
 
-    getAllOrdersbyAdmin : () => ClientAxios.get('/check-out/admin/orders')
+    getAllOrdersbyAdmin : (page , limit) => ClientAxios.get(`/check-out/admin/orders?page=${page}&limit=${limit}`)
 }

@@ -35,15 +35,17 @@ const statusConfig = {
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
-
+  const [page,setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [loading,setLoading] = useState(false) // đặt false để kết thúc trạng thái luôn không cho tải trạng thái
 
     const fetchOrders = async ()=>{
         try {
             
             setLoading(true)
-            const res = await checkOutCartApi.getAllOrdersbyAdmin()
+            const res = await checkOutCartApi.getAllOrdersbyAdmin(page, 10)
             setOrders(res.data)
+            setTotalPages(res.totalPages)
             console.log(res.data)
 
         } catch (error) {
@@ -69,7 +71,7 @@ const AdminOrders = () => {
 
   useEffect(()=>{
     fetchOrders()
-  },[])
+  },[page])
 
   if (loading) {
   return <p className="p-6">Đang tải đơn hàng...</p>;
@@ -133,7 +135,34 @@ const AdminOrders = () => {
           ))}
         </tbody>
       </table>
+
+
+
+      <div className="flex justify-center gap-2 mt-6">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(p => p - 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  <span className="px-3 py-1 font-medium">
+    {page} / {totalPages}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage(p => p + 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
+
     </div>
+    
+    
   );
 };
 
