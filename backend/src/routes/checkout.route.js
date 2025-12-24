@@ -14,7 +14,7 @@ router.post("/",checkAuth,createOder)
 
 router.patch('/orders/:id/status',checkAuth,checkPermission("admin"),updateOrderStatus)
 
-// router.get('/orders/:id',checkAuth,getOderDetails)
+router.get('/orders/:id',checkAuth,getOderDetails)
 
 
 

@@ -6,7 +6,7 @@ export const checkOutCartApi = {
     
     getCartDetail : (id)=> ClientAxios.get(`/check-out/orders/${id}`),
 
-    updateStatus : (id , status) => ClientAxios.patch(`/check-out/orders/${id}/status`,status),
+    updateStatus : (id , status) => ClientAxios.patch(`/check-out/orders/${id}/status`,{status}),
 
     getAllOrders : () => ClientAxios.get('/check-out/orders/list/client'),
 

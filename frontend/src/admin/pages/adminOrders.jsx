@@ -16,7 +16,7 @@ const statusConfig = {
     icon: <Clock size={18} />,
     color: "bg-yellow-100 text-yellow-700"
   },
-  shipping: {
+  processing: {
     label: "Đang giao",
     icon: <Truck size={18} />,
     color: "bg-blue-100 text-blue-700"
@@ -58,6 +58,7 @@ const AdminOrders = () => {
     try {
 
         await checkOutCartApi.updateStatus(id, status)
+        // window.alert("Thay đổi trạng thái thành công")
         fetchOrders() // load lại trang 
 
 
@@ -95,7 +96,7 @@ const AdminOrders = () => {
           {orders.map(order => (
             <tr key={order._id} className="border-t">
               <td className="p-3">{order._id}</td>
-              <td className="p-3">{order.name}</td>
+              <td className="p-3">{order.user.email}</td>
               <td className="p-3">
                 {order.totalPrice.toLocaleString()}đ
               </td>
@@ -113,13 +114,17 @@ const AdminOrders = () => {
               <td className="p-3">
                 <select
                   value={order.status}
+                  disabled={order.status === "processing"}
                   onChange={e =>
                     handleChangeStatus(order._id, e.target.value)
                   }
-                  className="border rounded px-2 py-1"
-                >
+                  className={`border rounded px-2 py-1
+                  ${order.status === "processing"
+                    ? "bg-gray-200 cursor-not-allowed"
+                    : ""}`}
+                       >
                   <option value="pending">Chờ xử lý</option>
-                  <option value="shipping">Đang giao</option>
+                  <option value="processing">Đang giao</option>
                   <option value="completed">Hoàn thành</option>
                   <option value="cancelled">Huỷ</option>
                 </select>

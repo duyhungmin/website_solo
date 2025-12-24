@@ -94,13 +94,6 @@ export const updateOrderStatus = async (req,res)=>{
         const {status} = req.body
         console.log("đây là STATUS ở update status",status)
 
-        // const allowStatus = [
-        //     "pending",
-        //     "processing",
-        //     "cancelled",
-        //     "completed"
-        // ]
-
         const allowStatus = ModelCheckOutCart.schema.path("status").enumValues
         console.log("trạng thái",allowStatus)
 
@@ -108,11 +101,22 @@ export const updateOrderStatus = async (req,res)=>{
             return res.status(400).json({message:"Invalid Status"})
         }
 
+
+
         const oder = await ModelCheckOutCart.findByIdAndUpdate(id,{status},{new:true})
 
         if(!oder){
             return res.status(404).json({message:"Oder not found"})
         }
+        if(oder.status === "processing"){
+              return res.status(400).json({
+             message: "Đơn hàng đang giao, không thể thay đổi trạng thái"
+      });
+        }
+
+
+        oder.status = status
+        await oder.save()
 
         return res.status(201).json({
             message:"update status successfully",
