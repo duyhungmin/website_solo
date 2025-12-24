@@ -1,7 +1,8 @@
 import { Plus, Image, Tag, DollarSign, Layers, CheckCircle } from 'lucide-react'
 import React from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import {useForm} from 'react-hook-form'
+import {productAPI} from "../api/products.api"
 import { useNavigate} from 'react-router-dom'
 const AddProductAdmin = () => {
 
@@ -11,8 +12,8 @@ const AddProductAdmin = () => {
   const onSubmit = async (data)=>{
 
     try {
-      const Response = await axios.post('http://localhost:3000/products',data)
-      console.log('Product added:', Response.data)
+      const res = await productAPI.createProduct(data)
+      console.log('Product added:', res.data)
       window.alert('Product added successfully')
       navigate('/admin/products')
     } catch (error) {

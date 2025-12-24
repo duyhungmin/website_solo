@@ -2,7 +2,8 @@ import React from 'react'
 import {useForm} from 'react-hook-form'
 import {useNavigate, useParams} from 'react-router-dom'
 import { Plus, Image, Tag, DollarSign, Layers, CheckCircle } from 'lucide-react'
-import axios from 'axios'
+// import axios from 'axios'
+import { productAPI } from '../api/products.api'
 // import { Plus, Tag, DollarSign, Layers, Image, CheckCircle } from 'react-feather'
 import {  useEffect } from 'react'
 const EditProductAdmin = () => {
@@ -13,8 +14,9 @@ const EditProductAdmin = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/products/${id}`)
-                const product = response.data.data
+                const response = await productAPI.getProductById(id)
+                const product = response.data
+                console.log(product)
                 setValue('name', product.name)
                 setValue('description', product.description)
                 setValue('price', product.price)
@@ -32,7 +34,7 @@ const EditProductAdmin = () => {
 
     const onSubmit = async (data) => {
         try {
-            await axios.put(`http://localhost:3000/products/${id}`, data)
+           await productAPI.updateProduct(id,data)
             window.alert('Product updated successfully')
             navigate('/admin/products')
         } catch (error) {

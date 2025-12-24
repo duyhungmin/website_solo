@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 
-const CheckOutSchema = new mongoose.Schema({
+const CheckOutSchema = new mongoose.Schema(
+    {
 
     user : {
 

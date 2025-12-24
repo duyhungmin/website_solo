@@ -4,6 +4,11 @@ export const checkOutCartApi = {
 
     createCheckOutCart : (data)=> ClientAxios.post("/check-out",data),
     
-    getCartDetail : (id)=> ClientAxios.get(`/check-out/orders/${id}`)
+    getCartDetail : (id)=> ClientAxios.get(`/check-out/orders/${id}`),
 
+    updateStatus : (id , status) => ClientAxios.patch(`/check-out/orders/${id}/status`,status),
+
+    getAllOrders : () => ClientAxios.get('/check-out/orders/list/client'),
+
+    getAllOrdersbyAdmin : () => ClientAxios.get('/check-out/admin/orders')
 }

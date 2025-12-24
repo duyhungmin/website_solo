@@ -4,9 +4,6 @@ export const getCart = async(req,res)=>{
 
   try {
       const userId = req.userId
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" })
-    }
     //  const userId = "69442e00792d233b651e7830"
     console.log(userId)
 
@@ -14,8 +11,7 @@ export const getCart = async(req,res)=>{
         console.log(cart)
 
     if(!cart){
-      // only create a cart when we have a valid userId
-      cart = await modelCart.create({user:userId, items:[]})
+        cart = await modelCart.create({user:userId, items:[]})
     }
      
     return res.status(200).json({
