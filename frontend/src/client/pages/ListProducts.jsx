@@ -14,14 +14,17 @@ import { useNavigate } from 'react-router-dom';
 const ListProducts = () => {
     const navigate = useNavigate()
 
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
     const [products, setProducts] = useState([])
 
     useEffect(()=>{
 
         const listProduct = async()=>{
             try {
-                   const response = await productAPI.getAllProduct()
+                   const response = await productAPI.getAllProduct(page , 8)
                      setProducts(response.data)
+                     setTotalPages(response.totalPages)
                      console.log(response)
             } catch (error) {
                 console.log("list product loi",error)
@@ -34,7 +37,7 @@ const ListProducts = () => {
         listProduct()
 
 
-    },[])
+    },[page])
 
 
 
@@ -90,11 +93,29 @@ Xem Sản Phẩm
 
 
 {/* Pagination */}
-<div className="flex justify-center gap-2 pt-6">
-<button className="rounded-lg border px-3 py-1">1</button>
-<button className="rounded-lg border px-3 py-1">2</button>
-<button className="rounded-lg border px-3 py-1">3</button>
+    <div className="flex justify-center gap-2 mt-6">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(p => p - 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  <span className="px-3 py-1 font-medium">
+    {page} / {totalPages}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage(p => p + 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Next
+  </button>
 </div>
+
+
 </div>
 );
 }

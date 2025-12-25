@@ -21,9 +21,27 @@ export const createProducts = async (req,res)=>{
 
 export const getAllProducts = async(req,res)=>{
     try {
-        const products = await modelProduct.find();
+
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 8
+        const skip = (page - 1 ) * limit
+ 
+        const products = await modelProduct.find()
+        .sort({createdAt : -1})
+        .skip(skip)
+        .limit(limit);
+
+        console.log(products)
+
+        const total = await modelProduct.countDocuments()
+        console.log(total)
+
         return res.status(200).json({
             message : "Products fetched successfully",
+            page, 
+            limit,
+            total,
+            totalPages : Math.ceil(total / limit),
             data : products
         })
     } catch (error) {

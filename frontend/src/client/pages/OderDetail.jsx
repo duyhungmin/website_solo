@@ -12,6 +12,7 @@ import {checkOutCartApi} from "../../admin/api/checkOutCart.api"
 const OrderDetail = () => {
   const { id } = useParams();
   const [order, setOrder] = useState();
+  const [status, setStatus] = useState()
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -25,6 +26,8 @@ const OrderDetail = () => {
 
     fetchOrder();
   }, [id]);
+
+  
 
   if (!order) {
     return <p className="p-6">Đang tải đơn hàng...</p>;

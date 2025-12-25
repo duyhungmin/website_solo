@@ -68,16 +68,30 @@ export const getOderDetails = async (req,res)=>{
 
 export const getAllOrder = async (req,res)=>{
     try {
-        const userId = req.userId
-        const order = await ModelCheckOutCart.find({user:userId}).sort({createdAt: -1})
 
+        const page = parseInt(req.query.page) ||  1
+        const limit = parseInt(req.query.limit) || 8
+        const skip = (page - 1) * limit
+        const userId = req.userId
+        const order = await ModelCheckOutCart.find({user:userId})
+        .sort({createdAt: -1})
+        .skip(skip)
+        .limit(limit)
+
+        console.log(order)
+
+        const total = await ModelCheckOutCart.countDocuments()
+        console.log(total)
         if(!order || order.length === 0){
             return res.status(404).json({message:"bạn chưa có đơn hàng nào"})
         }
 
          return res.status(200).json({
             message: "Lấy danh sách đơn hàng thành công",
-            total: order.length,
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
             data: order
             });
     } catch (error) {

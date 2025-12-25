@@ -7,7 +7,7 @@ import ClientAxios from "./axiosClient";
 export const productAPI = {
 
 
-    getAllProduct : ()=> ClientAxios.get("/products"),
+    getAllProduct : (page , limit)=> ClientAxios.get(`/products?page=${page}&limit=${limit}`),
 
     getProductById : (id)=> ClientAxios.get(`/products/${id}`),
 
