@@ -10,6 +10,7 @@ import Checkout from './pages/checkOutCart.jsx'
 import OrderSuccess from './pages/oderSuccess.jsx'
 import OrderDetail from './pages/OderDetail.jsx'
 import AllOrderUser from './pages/allOrderUser.jsx'
+import MockPayment from './pages/mock-payment.jsx'
 export const RouteClient = () => {
   return (
     <Routes>  
@@ -21,6 +22,7 @@ export const RouteClient = () => {
           <Route path='/oder-success/:id' element={<OrderSuccess/>}/>
           <Route path='/oder-details/:id' element={<OrderDetail/>}/>
           <Route path='/oder-user' element={<AllOrderUser/>}/>
+          <Route path='/mock-payment/:orderId' element={<MockPayment/>}/>
 
         </Route>
         <Route path='login' element={<Login/>}/>

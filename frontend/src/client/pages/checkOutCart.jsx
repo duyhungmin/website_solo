@@ -20,6 +20,8 @@ const CheckoutCart = () => {
   
   const [cart2, setCart]= useState([])
 
+  const [paymentMethod, setPaymentMethod] = useState("cod")
+
   const [form, setForm] = useState({
     fullname: "",
     phone: "",
@@ -50,11 +52,19 @@ const CheckoutCart = () => {
 
      const res = await checkOutCartApi.createCheckOutCart({
         shippingAddress: form,
-        paymentMethod : "cod"
+        paymentMethod
       });
-      console.log("Thêm thành công",res.data)
-      window.alert("ĐẶT HÀNG THÀNH CÔNG")
-      navigate(`/oder-success/${res.data._id}`)
+
+      if(res.paymentUrl){
+        window.location.href = res.paymentUrl
+        console.log(res.paymentUrl)
+      }else{
+        console.log("Thêm thành công",res.data)
+        window.alert("ĐẶT HÀNG THÀNH CÔNG")
+        navigate(`/oder-success/${res.data._id}`)
+      }
+
+    
       await fetch() // refresh cart
     } catch (error) {
       console.log("errr checkout",error)
@@ -65,18 +75,6 @@ if (!cart2 || !Array.isArray(cart2.items)) {
   return <p className="p-6">Đang tải giỏ hàng...</p>;
 }
 
-
-  // const handleCheckout = () => {
-  //   const order = {
-  //     products: cart,
-  //     total: totalPrice,
-  //     customer: form
-  //   };
-
-  //   console.log("ORDER:", order);
-  //   alert("Thanh toán thành công 🎉");
-  //   localStorage.removeItem("cart");
-  // };
 
   return (
 
@@ -178,6 +176,31 @@ if (!cart2 || !Array.isArray(cart2.items)) {
               className="w-full border rounded-lg pl-10 p-2"
             />
           </div>
+
+          <div className="space-y-2">
+            <p className="font-medium">Phương thức thanh toán</p>
+
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              Thanh toán khi nhận hàng (COD)
+            </label>
+
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                value="online"
+                checked={paymentMethod === "online"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              Thanh toán online
+            </label>
+          </div>
+
 
           {/* Button */}
           <button

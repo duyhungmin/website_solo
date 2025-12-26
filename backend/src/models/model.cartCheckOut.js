@@ -48,10 +48,15 @@ const CheckOutSchema = new mongoose.Schema(
 
     paymentStatus : {
         type: String,
-        enum :["unpaid","paid"],
+        enum :["unpaid","paid","pending","failed"],
         default:"unpaid"
     },
 
+    paymentExpireAt :{
+     type :Date,
+     index : true
+        },
+        
     status : {
         type: String,
         enum: ["pending","processing","completed","cancelled"],

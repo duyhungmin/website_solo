@@ -10,16 +10,23 @@ export const CartProvider = ({ children }) => {
     status: "active"
   });
 
+  const [isLoggedin, setIsLoggedin] = useState( !!localStorage.getItem("token"))
+
   const logout = async () => {
+      localStorage.removeItem("token");
+      setIsLoggedin(false)
     setCart({
       items: [],
       totalPrice: 0,
       status: "active"
     });
-    localStorage.removeItem("token");
+  
   };
 
   const fetch = async () => {
+
+    if(!localStorage.getItem("token")) return
+
     try {
       const res = await cartAPI.getCart();
 
@@ -41,8 +48,9 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setIsLoggedin(!!localStorage.getItem("token"))
     fetch();
-  }, []);
+  }, [localStorage.getItem("token")]);
 
   const cartCount = cart.items.reduce(
     (sum, i) => sum + i.quantity,
@@ -50,7 +58,7 @@ export const CartProvider = ({ children }) => {
   );
 
   return (
-    <CartContext.Provider value={{ cart, cartCount, fetch, logout }}>
+    <CartContext.Provider value={{ cart, cartCount, fetch, logout  ,setIsLoggedin}}>
       {children}
     </CartContext.Provider>
   );

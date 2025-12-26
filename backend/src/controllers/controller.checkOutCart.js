@@ -1,5 +1,6 @@
 import ModelCheckOutCart from "../models/model.cartCheckOut";
 import ModelCart from "../models/model.cart";
+import mongoose from "mongoose";
 
 export const createOder = async (req,res)=>{
 
@@ -13,13 +14,16 @@ export const createOder = async (req,res)=>{
         return res.status(404).json({message :"Cart is empty"})
     }
 
+
     const oder = await ModelCheckOutCart.create({
         user : userId,
         items : cart.items,
         totalPrice : cart.totalPrice,
         shippingAddress,
-        paymentMethod
+        paymentMethod,
+        paymentStatus: paymentMethod === "online" ? "pending" : "unpaid"
     })
+
 
     console.log(oder)
     // clear cart sau khi tạo oder ? 
@@ -29,8 +33,17 @@ export const createOder = async (req,res)=>{
     cart.status = "odered";
     await cart.save()
     
+
+    if(paymentMethod === "online"){
+        return res.status(201).json({
+            message :"redirect to payment",
+            paymentUrl : `http://localhost:5173/mock-payment/${oder._id}`,
+            orderId : oder._id
+        })
+    }
+
     res.status(201).json({
-        message:"Oder successfully",
+        message:"Oder  created successfully (COD)",
         data : oder
     })
 
@@ -176,3 +189,74 @@ export const getAllOrderByAdmin = async(req,res)=>{
         return res.status(500).json({message:"LỖI K LẤY ĐƯỢC HẾT NÈ",error})
     }
 }
+
+// export const mockPayment = async (req,res)=>{
+//     try {
+        
+//         const {orderId} = req.body
+ 
+//         console.log(orderId)
+
+//         // console.log("MOCK PAYMENT orderId:", orderId);
+
+//     if (!orderId) {
+//       return res.status(400).json({ message: "Missing orderId" });
+//     }
+
+//         const order = await ModelCheckOutCart.findById(orderId)
+//         if(!order){
+//             return res.status(404).json({message:"Order not found"})
+//         }
+
+//         order.paymentStatus = "paid"
+//         order.status = "processing"
+//         await order.save()
+
+
+//         return res.status(201).json({
+//             message: "payment success", 
+//             data : order
+//         })    
+
+
+//     } catch (error) {
+//         return res.status(500).json({message:"Loi mockpayemnt",error})
+//     }
+// }
+
+export const mockPayment = async (req, res) => {
+  try {
+    let { orderId } = req.body;
+    console.log(orderId)
+
+    // support nested payload: { orderId: { orderId: "..." } } or { orderId: "..." }
+    if (typeof orderId === "object" && orderId !== null && orderId.orderId) {
+      orderId = orderId.orderId;
+    }
+
+    if (!orderId) {
+      return res.status(400).json({ message: "Missing orderId" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ message: "Invalid orderId" });
+    }
+
+    const order = await ModelCheckOutCart.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    order.paymentStatus = "paid";
+    order.status = "processing";
+    await order.save();
+
+    return res.status(201).json({
+      message: "payment success",
+      data: order,
+    });
+  } catch (error) {
+    console.error("mockPayment error:", error);
+    return res.status(500).json({ message: "Loi mockpayment", error: error.message || error });
+  }
+};

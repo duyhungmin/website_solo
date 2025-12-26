@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+    import mongoose from "mongoose"
 
 const cartScheme = new mongoose.Schema(
    
@@ -8,7 +8,7 @@ const cartScheme = new mongoose.Schema(
             type : mongoose.Schema.Types.ObjectId,
             ref: "ModelUser",
             required:true,
-            unique: true // 1 user chỉ có 1 giỏ hàng hoạt động
+            // unique: true // 1 user chỉ có 1 giỏ hàng hoạt động
         },
 
         items : [

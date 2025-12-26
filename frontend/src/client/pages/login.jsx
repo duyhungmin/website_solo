@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {useForm} from 'react-hook-form'
 import {useNavigate} from 'react-router-dom'
+import { UseCart } from '../../context/cartContext'
 import React from 'react'
 
 const Login = () => {
 
     const navigate = useNavigate()
     const {register,handleSubmit,formState:{errors}} = useForm()
+    const { fetch, setIsLoggedin } = UseCart();
 
     const OnLogin = async(data)=>{
         try {
@@ -18,6 +20,8 @@ const Login = () => {
             console.log(response.data.data.role)
             localStorage.setItem("token", response.data.token)
             localStorage.setItem("user", JSON.stringify(response.data.data))
+            setIsLoggedin(true)
+            fetch()
             window.alert("Đăng nhập thành công")
             
             if(response.data.data.role === "admin") {

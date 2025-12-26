@@ -47,7 +47,13 @@ export const addToCart = async (req,res)=>{
 
     let cart = await modelCart.findOne({ user: userId, status: "active" })
     if (!cart) {
-      cart = await modelCart.create({ user: userId, items: [] })
+      cart = await modelCart.create({ 
+        user: userId,
+        items: [] ,
+        totalPrice : 0,
+        status : "active"
+      
+      })
     }
 
     const itemIndex = cart.items.findIndex(
