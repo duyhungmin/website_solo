@@ -1,7 +1,7 @@
 import React from 'react'
-import {useForm} from 'react-hook-form'
+import {useForm, useFieldArray} from 'react-hook-form'
 import {useNavigate, useParams} from 'react-router-dom'
-import { Plus, Image, Tag, DollarSign, Layers, CheckCircle } from 'lucide-react'
+import { Plus, Image, Tag, DollarSign, Layers, CheckCircle , Trash2 } from 'lucide-react'
 // import axios from 'axios'
 import { productAPI } from '../api/products.api'
 // import { Plus, Tag, DollarSign, Layers, Image, CheckCircle } from 'react-feather'
@@ -9,8 +9,26 @@ import {  useEffect } from 'react'
 const EditProductAdmin = () => {
     const {id} = useParams()
     const navigate = useNavigate()
-    const {register,handleSubmit,formState:{errors}, setValue} = useForm()
+    const { register, handleSubmit, formState: { errors },control ,setValue } = useForm({
+        defaultValues :{
+          variants :[
+            {
+              sku :'',
+              price:'',
+              attribute:'',
+              stock:'',
+              image:''
+            }
+          ]
+        }
+      })
     
+    const {fields, append , remove} = useFieldArray({
+       control,
+       name:'variants'
+     })
+
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -19,12 +37,11 @@ const EditProductAdmin = () => {
                 console.log(product)
                 setValue('name', product.name)
                 setValue('description', product.description)
-                setValue('price', product.price)
                 setValue('brand', product.brand)
-                setValue('attribute', product.attribute)
-                setValue('image', product.image)
+                setValue('images', product.images)
                 setValue('category', product.category)
                 setValue('status', product.status)
+                setValue ('variants', product.variants || [])
             } catch (error) {
                 console.error('Error fetching product:', error)
             }
@@ -42,7 +59,7 @@ const EditProductAdmin = () => {
         }
     }
 
-  return (
+return (
     <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm p-6">
       <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-6">
         <Plus /> Add Product
@@ -88,30 +105,7 @@ const EditProductAdmin = () => {
           />
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
         </div>
-        
-
-        {/* Price & Brand */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <DollarSign size={16} /> Price
-            </label>
-            <input
-              type="number"
-              placeholder="0.00"
-              {...register('price',{ 
-                required: "Bắt buộc nhập giá sản phẩm", 
-                maxLength:{
-                  value: 10,
-                  message: 'Price cannot exceed 10 digits'
-                }
-              })
-                }
-              className="mt-2 w-full rounded-lg border px-4 py-2"
-            />
-            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
-          </div>
-
+      
           <div>
             <label className="text-sm font-medium text-gray-600">Brand</label>
             <input
@@ -130,26 +124,6 @@ const EditProductAdmin = () => {
             {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand.message}</p>}
           </div>
           
-        </div>
-
-        {/* Attribute */}
-        <div>
-          <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Layers size={16} /> Attributes
-          </label>
-          <input
-            type="text"
-            placeholder="Color, Size, Storage..."
-            {...register('attribute',{ 
-              required: "Bắt buộc nhập thuộc tính sản phẩm", 
-            //   trim: true,
-            })}
-            className="mt-2 w-full rounded-lg border px-4 py-2"
-          />
-         {errors.attribute && <p className="text-red-500 text-sm mt-1">{errors.attribute.message}</p>}
-        {/* Image */}
-        </div>
- 
         <div>
           <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <Image size={16} /> Image URL
@@ -157,10 +131,10 @@ const EditProductAdmin = () => {
           <input
             type="text"
             placeholder="https://image-url"
-            {...register('image',{ required: "Bắt buộc nhập URL hình ảnh sản phẩm" })}
+            {...register('images',{ required: "Bắt buộc nhập URL hình ảnh sản phẩm" })}
             className="mt-2 w-full rounded-lg border px-4 py-2"
           />
-        {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>}  
+        {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images.message}</p>}  
          
         </div>
 
@@ -197,6 +171,72 @@ const EditProductAdmin = () => {
 {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
             
         </div>
+
+          <div className="border-t pt-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Layers /> Variants
+            </h2>
+
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4 p-4 border rounded-lg"
+              >
+                <input
+                  placeholder="SKU"
+                  {...register(`variants.${index}.sku`, { required: true })}
+                  className="input"
+                />
+
+                <input
+                  type="number"
+                  placeholder="Price"
+                  {...register(`variants.${index}.price`, { required: true })}
+                  className="input"
+                />
+
+                <input
+                  placeholder="Attribute (Color / Size...)"
+                  {...register(`variants.${index}.attribute`, { required: true })}
+                  className="input"
+                />
+
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  {...register(`variants.${index}.stock`, { required: true })}
+                  className="input"
+                />
+
+                <div className="flex gap-2">
+                  <input
+                    placeholder="Image URL"
+                    {...register(`variants.${index}.image`)}
+                    className="input"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="text-red-500"
+                  >
+                    <Trash2 />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() =>
+                append({ sku: '', price: '', attribute: '', stock: '', image: '' })
+              }
+              className="flex items-center gap-2 text-sm text-blue-600"
+            >
+              <Plus size={16} /> Add Variant
+            </button>
+          </div>
+
+
       {/* Submit */}
         <div className="flex justify-end gap-3 pt-4">
           <button onClick={()=>navigate('/admin/products')}

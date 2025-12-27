@@ -85,6 +85,8 @@ export const updateProductById = async(req,res)=>{
             runValidators : true
         })
 
+        console.log(product)
+
         if(!product){
             return res.status(404).json({
                 message : "Product not found"

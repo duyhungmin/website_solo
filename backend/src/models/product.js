@@ -1,3 +1,4 @@
+// import { required } from "joi";
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -15,24 +16,14 @@ const productSchema = new mongoose.Schema(
         required : true,
         maxlength : [1000,"Product description cannot exceed 1000 characters"]
     },
-    price : {
-        type : Number,
-        required : true,
-        maxlength : [10,"Product price cannot exceed 10 digits"]
-    },
     brand : {
         type : String,
         required : true,
         trim : true,
         maxlength : [50,"Product brand cannot exceed 50 characters"]
     },
-    attribute :{
-        type : String,
-        required : true,
-        trim : true,
-        maxlength : [50,"Product attribute cannot exceed 50 characters"]
-    },
-    image : {
+    
+    images : {
         type : String,
         required : true
     },
@@ -47,7 +38,45 @@ const productSchema = new mongoose.Schema(
         required : true,
         enum : ["In Stock","Out of Stock","Discontinued"],
         default : "In Stock"
+    },
+
+    variants : [
+    
+    {
+        sku: {
+        type: String,
+        required: true
+      },
+        price : {
+        type : Number,
+        required : true,
+        maxlength : [10,"Product price cannot exceed 10 digits"]
+    },
+         attribute :{
+        type : String,
+        required : true,
+        trim : true,
+        maxlength : [50,"Product attribute cannot exceed 50 characters"]
+    },
+       stock: {
+        type: Number,
+        required: true,
+        min: 0
+      },
+      
+       image: {
+       type : String,
+       required: true
+       }
     }
+
+
+    
+
+
+],
+
+
 
 },{ timestamps : true, versionKey: false}
 )
